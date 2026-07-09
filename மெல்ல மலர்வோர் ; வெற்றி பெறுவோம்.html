@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>மெல்ல மலர்வோர் ; வெற்றி பெறுவோம்</title>
+  <!-- Google Fonts for English and Tamil readability -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Catamaran:wght@500;800&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+  
+  <!-- CDNs for Offline-Ready Fallbacks (Loaded dynamically, standard fallback exists) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="cartoon-theme">
+  <!-- Sky background with animated clouds and stars -->
+  <div class="sky-background">
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+    <div class="cloud cloud-3"></div>
+    <div class="stars-container" id="starsContainer"></div>
+  </div>
+
+  <!-- Main Game Container -->
+  <main class="app-container">
+    
+    <!-- Top Information Bar (visible in reading flow) -->
+    <header class="top-bar hidden" id="topBar">
+      <div class="top-bar-left">
+        <button class="back-home-btn icon-btn" id="topHomeBtn" title="முகப்பு">🏠</button>
+        <div class="progress-container">
+          <span class="progress-text" id="progressText">வார்த்தை: 1/20</span>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="progressBarFill" style="width: 5%"></div>
+          </div>
+        </div>
+      </div>
+      <div class="top-bar-right">
+        <div class="stat-badge star-badge">
+          <span class="badge-icon">⭐</span>
+          <span class="badge-value" id="topStars">0</span>
+        </div>
+        <div class="stat-badge accuracy-badge">
+          <span class="badge-icon">🎯</span>
+          <span class="badge-value" id="topAccuracy">100%</span>
+        </div>
+        <div class="stat-badge streak-badge">
+          <span class="badge-icon">🔥</span>
+          <span class="badge-value" id="topStreak">0</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- VIEWS -->
+
+    <!-- 1. HOME VIEW -->
+    <section class="view-section active" id="homeView">
+      <div class="home-hero">
+        <div class="logo-animation">
+          <span class="balloon balloon-red">🎈</span>
+          <span class="balloon balloon-blue">🎈</span>
+          <span class="balloon balloon-yellow">🎈</span>
+        </div>
+        <h1 class="main-title rainbow-text">📚 மெல்ல மலர்வோர் ; வெற்றி பெறுவோம்</h1>
+        <p class="subtitle">SJKT Interactive Reading Book</p>
+        
+        <!-- Interactive Mascot Display -->
+        <div class="mascot-container" id="mascotHome">
+          <div class="mascot-chibi">
+            <div class="mascot-eyes">
+              <div class="eye"></div>
+              <div class="eye"></div>
+            </div>
+            <div class="mascot-blush"></div>
+            <div class="mascot-mouth"></div>
+          </div>
+          <div class="mascot-bubble" id="mascotHomeBubble">வணக்கம்! படிக்கத் தயாரா?</div>
+        </div>
+
+        <div class="character-selector">
+          <h3>உன் நண்பனைத் தேர்ந்தெடு:</h3>
+          <div class="characters-grid">
+            <button class="char-choice active" data-char="anbu" style="--char-color: #ff6b6b">👦 அறிவொளி</button>
+            <button class="char-choice" data-char="kayal" style="--char-color: #4dadf7">👧 விடியல்</button>
+            <button class="char-choice" data-char="singam" style="--char-color: #fcc419">🦁 வெற்றி</button>
+            <button class="char-choice" data-char="mayil" style="--char-color: #20c997">🦚 சுடர்</button>
+            <button class="char-choice" data-char="kavin" style="--char-color: #9775fa">👦 சிகரம்</button>
+          </div>
+        </div>
+
+        <!-- Student Name Input Box -->
+        <div class="student-name-container">
+          <label for="homeStudentNameInput"><h3>உன் பெயர் என்ன? (Type Your Name):</h3></label>
+          <input type="text" id="homeStudentNameInput" placeholder="உன் பெயரை எழுதவும்..." class="custom-input" value="அறிவொளி">
+        </div>
+
+        <!-- Word Selection Section -->
+        <div class="word-selector-section">
+          <h3>சொல்லைத் தேர்ந்தெடு (Choose Word to Read):</h3>
+          <div class="words-grid" id="wordsGrid"></div>
+        </div>
+
+        <div class="menu-buttons">
+          <button class="btn btn-primary btn-large btn-start" id="startBtn">
+            <span class="btn-icon">🚀</span> தொடங்கு (START)
+          </button>
+          
+          <div class="menu-secondary-row">
+            <button class="btn btn-secondary" id="parentBtn">
+              <span class="btn-icon">👨‍👩‍👦</span> பெற்றோர் (Parent)
+            </button>
+            <button class="btn btn-secondary" id="teacherBtn">
+              <span class="btn-icon">👩‍🏫</span> ஆசிரியர் (Teacher)
+            </button>
+            <button class="btn btn-icon-only" id="settingsBtn" title="அமைப்புகள்">
+              ⚙️
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. READING VIEW -->
+    <section class="view-section hidden" id="readingView">
+      <div class="reading-card-wrapper">
+        <div class="reading-card" id="readingCard">
+          
+          <!-- Tamil Word Panel -->
+          <div class="word-display-container">
+            <h2 class="tamil-word-large" id="wordDisplay">அம்மா</h2>
+            <div class="spelled-letters-container" id="spelledLetters">
+              <!-- Animated individual letters populate here -->
+            </div>
+          </div>
+
+          <!-- Interaction Message / Feedback -->
+          <div class="instruction-box">
+            <p id="instructionText">தயாராகுங்கள்...</p>
+          </div>
+
+          <!-- Animated Mascot Helper -->
+          <div class="mascot-container" id="mascotHelper">
+            <div class="mascot-chibi active-mascot">
+              <div class="mascot-eyes">
+                <div class="eye"></div>
+                <div class="eye"></div>
+              </div>
+              <div class="mascot-blush"></div>
+              <div class="mascot-mouth"></div>
+            </div>
+            <div class="microphone-pulse-container hidden" id="micPulse">
+              <span class="mic-emoji">🎤</span>
+            </div>
+          </div>
+
+          <!-- Speech Input Text Tracker -->
+          <div class="speech-speech-text-container hidden" id="speechTextContainer">
+            <span class="speech-prefix">நீங்கள் சொன்னது: </span>
+            <span class="speech-content" id="spokenWordText">...</span>
+          </div>
+
+          <div class="speech-status hidden" id="speechStatusText" style="margin-top: 10px; text-align:center; font-weight:700; color: var(--primary-color, #2b6cb0);">
+            கேட்டுக்கொண்டு இருக்கிறது...
+          </div>
+
+          <div class="manual-check-wrapper hidden" id="checkReadingWrapper" style="display:none;">
+            <button class="btn btn-success" id="checkReadingBtn" disabled>
+              ✅ வாசிப்பை சரிபார்
+            </button>
+          </div>
+
+          <!-- Try Again Button Container -->
+          <div class="try-again-wrapper hidden" id="tryAgainWrapper">
+            <button class="btn btn-danger" id="tryAgainBtn">
+              🔄 மீண்டும் முயற்சி செய் (Try Again)
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Confetti & Fireworks overlays -->
+      <div class="celebration-overlay hidden" id="celebrationOverlay"></div>
+
+      <!-- Bottom controls bar -->
+      <footer class="bottom-bar">
+        <button class="btn btn-control" id="prevWordBtn">
+          <span class="btn-icon">⬅️</span> பின்னே (Prev)
+        </button>
+        <button class="btn btn-control btn-accent" id="listenAgainBtn">
+          <span class="btn-icon">🔊</span> மீண்டும் கேள்
+        </button>
+        <button class="btn btn-control btn-highlight" id="manualMicBtn">
+          <span class="btn-icon">🎤</span> பேசு (Read)
+        </button>
+        <button class="btn btn-control" id="nextWordBtn">
+          முன்னே <span class="btn-icon">➡️</span>
+        </button>
+      </footer>
+    </section>
+
+    <!-- 3. SETTINGS VIEW -->
+    <section class="view-section hidden" id="settingsView">
+      <div class="panel-card">
+        <div class="panel-header">
+          <h2>⚙️ அமைப்புகள் (Settings)</h2>
+          <button class="btn-close" id="closeSettingsBtn">✕</button>
+        </div>
+        <div class="panel-body">
+          <div class="setting-item">
+            <label for="voiceSpeed">🗣️ வாசிப்பு வேகம் (Voice Speed)</label>
+            <select id="voiceSpeed" class="custom-select">
+              <option value="0.5">மெதுவாக (Slow)</option>
+              <option value="0.8" selected>சாதாரண (Medium)</option>
+              <option value="1.1">வேகமாக (Fast)</option>
+            </select>
+          </div>
+
+          <div class="setting-item">
+            <label for="voiceSelection">🗣️ குரல் தேர்வு (Voice Selection)</label>
+            <select id="voiceSelection" class="custom-select">
+              <option value="female">பெண் குரல் (Female)</option>
+              <option value="male">ஆண் குரல் (Male)</option>
+            </select>
+          </div>
+
+          <div class="setting-item toggle-item">
+            <span>🎵 பின்னணி இசை (Background Music)</span>
+            <label class="switch">
+              <input type="checkbox" id="musicToggle" checked>
+              <span class="slider round"></span>
+            </label>
+          </div>
+
+          <div class="setting-item toggle-item">
+            <span>🔊 ஒலி விளைவுகள் (Sound Effects)</span>
+            <label class="switch">
+              <input type="checkbox" id="soundsToggle" checked>
+              <span class="slider round"></span>
+            </label>
+          </div>
+
+          <div class="setting-item toggle-item">
+            <span>🌙 இருண்ட பயன்முறை (Dark Mode)</span>
+            <label class="switch">
+              <input type="checkbox" id="darkModeToggle">
+              <span class="slider round"></span>
+            </label>
+          </div>
+
+          <div class="setting-item toggle-item">
+            <span>🔍 முழுச் சொல்லை மட்டும் சரிபார் (Verify Whole Word Only)</span>
+            <label class="switch">
+              <input type="checkbox" id="onlyVerifyWholeWordToggle" checked>
+              <span class="slider round"></span>
+            </label>
+            <small class="help-text">எழுத்துக்களைத் தனித்தனியாகப் பேசுவதைத் தவிர்த்து, முழுச் சொல்லை மட்டும் சரிபார்க்கும்.</small>
+          </div>
+
+          <div class="setting-item toggle-item">
+            <span>🛡️ கைமுறை சரிபார்ப்பு (Manual Pass Mode)</span>
+            <label class="switch">
+              <input type="checkbox" id="manualModeToggle">
+              <span class="slider round"></span>
+            </label>
+            <small class="help-text">பேச்சு அங்கீகாரத்தில் சிக்கல் இருந்தால், கைமுறையாகச் சரிபார்க்கவும்.</small>
+          </div>
+
+          <!-- Speech Diagnostic & Testing Area -->
+          <div class="setting-item" style="background-color: var(--light-gray); padding: 15px; border-radius: 16px; border: 2px dashed var(--border-color); margin-top: 15px;">
+            <h4 style="font-size: 14px; margin-bottom: 8px;">🗣️ குரல் பரிசோதனை (Speech Diagnostic)</h4>
+            <div id="ttsStatus" style="font-size: 13px; font-weight: 800; color: var(--danger-color); margin-bottom: 8px;">குரல்கள் சோதிக்கப்படுகிறது...</div>
+            <button type="button" class="btn btn-sm btn-accent" id="testVoiceBtn" style="font-size: 12px; padding: 6px 12px;">🔈 குரலைச் சோதி (Test Speech)</button>
+            <select id="diagnosticVoiceList" class="custom-select" style="font-size: 12px; padding: 6px; margin-top: 8px; width: 100%;">
+              <!-- Populated dynamically -->
+            </select>
+          </div>
+          
+          <button class="btn btn-primary" id="saveSettingsBtn" style="margin-top: 20px;">சேமி (Save)</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. TEACHER DASHBOARD VIEW -->
+    <section class="view-section hidden" id="teacherView">
+      <div class="dashboard-card">
+        <div class="panel-header">
+          <h2>👩‍🏫 ஆசிரியர் பகுதி (Teacher Dashboard)</h2>
+          <button class="btn btn-secondary btn-sm" id="teacherBackHomeBtn">முகப்பு</button>
+        </div>
+        <div class="panel-body">
+          <div class="dashboard-top-metrics">
+            <div class="metric-box">
+              <span class="metric-label">மாணவர் பெயர்:</span>
+              <input type="text" id="studentNameInput" class="custom-input" style="font-size:14px; padding:6px 12px; width:180px; max-width:100%; border-radius:12px;" placeholder="மாணவர் பெயர்...">
+            </div>
+            <button class="btn btn-danger btn-sm" id="resetLogsBtn" style="height: fit-content; margin-top: auto;">தரவை அழி (Reset)</button>
+          </div>
+
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <h3 id="tTotalWords">0</h3>
+              <p>வாசித்த வார்த்தைகள்</p>
+            </div>
+            <div class="metric-card success-card">
+              <h3 id="tCorrect">0</h3>
+              <p>சரியானவை</p>
+            </div>
+            <div class="metric-card error-card">
+              <h3 id="tWrong">0</h3>
+              <p>தவறானவை</p>
+            </div>
+            <div class="metric-card">
+              <h3 id="tAccuracy">0%</h3>
+              <p>சராசரி துல்லியம்</p>
+            </div>
+          </div>
+
+          <div class="chart-container-wrapper">
+            <canvas id="teacherChart"></canvas>
+          </div>
+
+          <div class="table-container">
+            <table class="report-table" id="reportTable">
+              <thead>
+                <tr>
+                  <th>மாணவர் (Student)</th>
+                  <th>வார்த்தை</th>
+                  <th>முயற்சிகள் (Attempts)</th>
+                  <th>முடிவு (Result)</th>
+                  <th>நேரம் (Time)</th>
+                </tr>
+              </thead>
+              <tbody id="teacherTableBody">
+                <!-- Word statistics populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="export-actions">
+            <button class="btn btn-accent" id="exportCSV">📊 Export CSV</button>
+            <button class="btn btn-accent" id="exportExcel">📝 Export Excel</button>
+            <button class="btn btn-accent" id="exportPDF">📄 Export PDF Report</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. PARENT DASHBOARD VIEW -->
+    <section class="view-section hidden" id="parentView">
+      <div class="dashboard-card">
+        <div class="panel-header">
+          <h2>👨‍👩‍👦 பெற்றோர் பகுதி (Parent Dashboard)</h2>
+          <button class="btn btn-secondary btn-sm" id="parentBackHomeBtn">முகப்பு</button>
+        </div>
+        <div class="panel-body">
+          <div class="parent-summary-grid">
+            <div class="parent-summary-card">
+              <h4>இன்று வாசித்தவை</h4>
+              <p id="pTodayRead">0 வார்த்தைகள்</p>
+            </div>
+            <div class="parent-summary-card">
+              <h4>சேகரித்த நட்சத்திரங்கள்</h4>
+              <p id="pStars">⭐ 0</p>
+            </div>
+            <div class="parent-summary-card">
+              <h4>நாள் தொடர்ச்சி (Streak)</h4>
+              <p id="pStreak">🔥 0 நாட்கள்</p>
+            </div>
+          </div>
+
+          <div class="rewards-showcase">
+            <h3>🏅 பெற்ற பதக்கங்கள் (Badges Earned)</h3>
+            <div class="badges-row" id="badgesRow">
+              <div class="badge-item locked" id="badge-first">
+                <span class="badge-graphic">🏆</span>
+                <span class="badge-title">முதல் படி</span>
+              </div>
+              <div class="badge-item locked" id="badge-streak">
+                <span class="badge-graphic">🔥</span>
+                <span class="badge-title">தொடர் வாசிப்பாளர்</span>
+              </div>
+              <div class="badge-item locked" id="badge-stars">
+                <span class="badge-graphic">⭐</span>
+                <span class="badge-title">நட்சத்திர நாயகன்</span>
+              </div>
+              <div class="badge-item locked" id="badge-master">
+                <span class="badge-graphic">🎓</span>
+                <span class="badge-title">தமிழ் அறிஞர்</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="reading-calendar-wrapper">
+            <h3>📅 வாசிப்பு நாட்காட்டி (Reading Calendar)</h3>
+            <div class="calendar-grid" id="calendarGrid">
+              <!-- Calendar days 1 to 30 populated dynamically -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. END PAGE VIEW -->
+    <section class="view-section hidden" id="endView">
+      <div class="end-card text-center">
+        <div class="trophy-container animate-bounce">
+          🏆
+        </div>
+        <h2 class="rainbow-text end-title">வாழ்த்துக்கள்!</h2>
+        <p class="end-subtitle">நீ அனைத்து சொற்களையும் வெற்றிகரமாகப் படித்துவிட்டாய்!</p>
+
+        <div class="star-tally">
+          ⭐⭐⭐⭐⭐
+        </div>
+
+        <div class="certificate-preview-container">
+          <div class="certificate-frame" id="certificateFrame">
+            <div class="cert-border-outer">
+              <div class="cert-border-inner">
+                <div class="cert-content">
+                  <div class="cert-header">மெல்ல மலர்வோர் ; வெற்றி பெறுவோம்</div>
+                  <h1 class="cert-title">சிறப்புச் சான்றிதழ்</h1>
+                  <p class="cert-to">இச் சான்றிதழ்</p>
+                  <h2 class="cert-student-name" id="certStudentName">மாணவர் பெயர்</h2>
+                  <p class="cert-body">ஆண்டு 1 தமிழ் வாசிப்புப் பயிற்சிகளை வெற்றிகரமாக நிறைவு செய்து, சொற்களை மிகச் சரியாக உச்சரித்து வாசித்தமைக்காக வழங்கப்படுகிறது.</p>
+                  <div class="cert-meta">
+                    <div class="cert-date">நாள்: <span id="certDate">27/06/2026</span></div>
+                    <div class="cert-sig">
+                      <div class="sig-line"></div>
+                      <div>வழங்கியவர் (மெல்ல மலர்வோர் ; வெற்றி பெறுவோம்)</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="end-actions">
+          <button class="btn btn-primary" id="printCertificateBtn">📄 சான்றிதழ் அச்சிடு (Print Certificate)</button>
+          <button class="btn btn-secondary" id="restartGameBtn">🔄 மீண்டும் தொடங்கு</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
